@@ -12,6 +12,8 @@ function App() {
   const imagePatch = [input1,input2]
   const [ImageFind , setImagePatch] = useState(false)
   const [image,setImage]=useState([]);
+  const [counter, setCounter] = useState(500);
+
   let array1=[0,1 , 2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 , 10 ,11 ,12 ,13 ,14 ,15 ,16 ,17 , 18 , 19 ]
 
 
@@ -43,8 +45,15 @@ let patch=[1,1]
       
   }  
     function findImage(imagePatch){
+      console.log(imagePatch)
      let m=[1,3] , w=[1,1] ,  z=[1,2] ,   n=[1,4] , a=[2,2] , l=[2,3] , r=[2,4] , k=[3,3] , j=[3,4] , b=[4,4]
-     const trick1 ={[m]:[5,13],[w]:[2,4],[z]:[3,6] ,[n]:[1,16] , [a]:[8,10] , [l]:[9,12] , [r]:[7,17], [k]:[10,15],[j]:[14,19],[b]:[18,20]}
+    // const trick1 ={[m]:[5,13],[w]:[2,4],[z]:[3,6] ,[n]:[1,16] , [a]:[8,10] , [l]:[9,12] , [r]:[7,17], [k]:[10,15],[j]:[14,19],[b]:[18,20]}
+
+     const trick1 ={[m]:[7,8],[w]:[3,4],[z]:[5,6] ,[n]:[1,2] , [a]:[11,12] , [l]:[13,14] , [r]:[9,10], [k]:[16,15],[j]:[17,18],[b]:[19,20]}
+
+     
+
+
      patch = trick1[imagePatch]
     
    console.log(patch)
@@ -57,7 +66,6 @@ let patch=[1,1]
  
   function handleSubmit(e){
     e.preventDefault();
-   console.log('aa')
    console.log(input1 , input2)
     input1  && input2 && (
       
@@ -65,30 +73,46 @@ let patch=[1,1]
       )
     }
 
-    function inputHandler1 (e){
+    function inputHandler1 (e){  //    change name function
     setInput1(Number(e.target.value))
     }
-    function inputHandler2 (e){
+    function inputHandler2 (e){   //  change name function
       setInput2(Number(e.target.value))
     
     }
+
+    function SetTimeOutc(counter){
+      counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+return counter
+    }
+
+    //useEffect(() => {
+    //  counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+    //}, [counter]);
+
+    SetTimeOutc(counter)
 
     if (posts.length <= 0 ) {
       return <h1>we dont have data</h1>;
     }
 
+    
   return  (
-    <div className="App">
+    <div className="App  w-[1000px] mx-auto">
       <Header/>
-      <div>
-        watch all image card  and remember twice of them
+      {counter > 0 &&
+<div >
+      <div className="mb-2 text-lg font-medium">
+        watch all image card  and remember twice of them in {counter}
       </div>
 
       <div className="grid grid-cols-10 gap-2 ">
       {array1.map((e)=> <RenderImageCard  posts={posts} number={e} twice={true} />)}
-      </div>
+</div>
+      </div>}
 
-      <div className="flex flex-row mt-5 ">
+      
+     { counter === 0 && !ImageFind  && ( <div className="flex flex-row mt-5 ">
       <div className=" grid grid-cols-5 gap-4">
       <RenderImageCard  posts={posts} number={array1[0]}/> 
       <RenderImageCard  posts={posts} number={array1[2]}/> 
@@ -117,9 +141,9 @@ let patch=[1,1]
       </div>
      
 <Form handleSubmit={handleSubmit} setInput1={setInput1} setInput2={setInput2} input1={input1} input2={input2} inputHandler1={inputHandler1} inputHandler2={inputHandler2}/>
-      </div>
+      </div>)}
 
-  {ImageFind &&  <div className=" grid grid-cols-2 gap-4">
+  {ImageFind &&  <div className=" grid grid-cols-200/200 ">
         <RenderImageCard  posts={posts} number={image[0]-1}/> 
         <RenderImageCard  posts={posts} number={image[1]-1}/> 
       </div>}
@@ -130,11 +154,25 @@ let patch=[1,1]
 
 function Header() {
   return <header className="App-header  ">
-    <h1 className="text-3xl font-bold text-blue-500   underline">
+    <h1 className="text-3xl font-bold text-blue-500  my-5  ">
       i can find your image by guess in the first time
     </h1>
   </header>;
 }
+
+
+function RenderImageCard({posts , number , twice}){
+  const padding = number%2 !== 0 ? 0  : 6
+ const  style =  twice && `py-${padding}`;
+ console.log(style)
+  return  (
+      <div  className= {` justify-self-center rounded-xl  overflow-hidden shadow-md shadow-black   ${style}  `} >
+<img className= {`w-36 h-36 ${style}  `} src={posts.hits[number].webformatURL} alt="Sunset in the mountains"/>
+    </div>
+  );
+}
+export default App;
+
 
 function Form({handleSubmit ,  input1 , input2 , inputHandler1, inputHandler2}) {
   return <form>
@@ -153,13 +191,3 @@ function Form({handleSubmit ,  input1 , input2 , inputHandler1, inputHandler2}) 
     <button  type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleSubmit}>Submit</button>
   </form>;
 }
-
-function RenderImageCard({posts , number , twice}){
-  const padding = number%2 !== 0 ? 0  : 10
-  return  (
-      <div className= {`rounded overflow-hidden shadow-lg ${twice && `ml-${padding}` }  `} >
-<img className=" w-36 h-36" src={posts.hits[number].webformatURL} alt="Sunset in the mountains"/>
-    </div>
-  );
-}
-export default App;
